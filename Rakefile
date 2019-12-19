@@ -10,5 +10,5 @@ end
 
 desc "Rspec tests."
 RSpec::Core::RakeTask.new(:spec) do |t|
-	t.pattern = "test/*_spec.rb"
+	t.pattern = "spec/*_spec.rb"
 end
