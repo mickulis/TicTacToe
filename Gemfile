@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+gem 'bundler'
+gem 'minitest'
+gem 'minitest-reporters', '>= 0.5.0'
+gem 'rspec'
+gem 'simplecov'
+gem 'rake'
