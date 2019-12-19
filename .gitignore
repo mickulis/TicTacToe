@@ -1,4 +1,5 @@
 sandbox.rb
+Gemfile.lock
 .idea/
 
 *.gem
