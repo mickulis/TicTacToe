@@ -6,19 +6,10 @@ class Board
 		@filled = 0
 	end
 
-	def token_to_value(token)
-		if token == 'X'
-			1
-		elsif token == 'O'
-			-1
-		else
-			raise ArgumentError
-		end
-	end
-
+	# true if valid move, false if invalid, ArgumentError if
 	def insert(position, token)
 		value = token_to_value(token)
-		if check(position)
+		if legal_move?(position)
 			@board[position] = value
 			add_victory_points(position, value)
 			@filled += 1
@@ -28,18 +19,34 @@ class Board
 		end
 	end
 
-	def legal_move?(position)
-		@board[position].nil?
+	def get_position(position)
+		if @board[position].nil?
+			nil
+		elsif @board[position] > 0
+			'X'
+		elsif @board[position] < 0
+			'O'
+		else
+			nil
+		end
 	end
 
-	def check(position)
-		if @board[position].nil?
-			true
+	# true if empty position, false if position taken, ArgumentError if invalid position
+	def legal_move?(position)
+		if position.nil?
+			false
+		elsif position.between? 0, 8
+			if @board[position].nil?
+				true
+			else
+				false
+			end
 		else
 			false
 		end
 	end
 
+	# 'X' if P1 wins, 'O' if P2 wins, 'DRAW' if board is full without a winner, false if board is not full without winner
 	def victory?
 		if @victory_points.include? 3
 			'X'
@@ -57,18 +64,30 @@ class Board
 		@filled == 9
 	end
 
-	def add_victory_points(position, token)
+	private
+
+	def add_victory_points(position, value)
 		#row
-		@victory_points[position/3 + 3] += token
+		@victory_points[position/3 + 3] += value
 		#column
-		@victory_points[position % 3] += token
+		@victory_points[position % 3] += value
 
 		#diagonals
 		if position % 4 == 0
-			@victory_points[6] += token
+			@victory_points[6] += value
 		end
 		if (position.between?(1, 7)) && (position % 2 == 0)
-			@victory_points[7] += token
+			@victory_points[7] += value
+		end
+	end
+
+	def token_to_value(token)
+		if token == 'X'
+			1
+		elsif token == 'O'
+			-1
+		else
+			raise ArgumentError.new("invalid token")
 		end
 	end
 

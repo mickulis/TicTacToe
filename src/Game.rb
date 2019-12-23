@@ -6,34 +6,51 @@ class Game
 	end
 
 	def start
-		game_over = false
-
+		puts "start\n"
+		@game_over = false
 		loop do
-			player_move = @player_1.take_a_turn(board)
-			break if @board.check(player_move)
-		end
-		@board.insert(player_move, 1)
-		result = @board.victory?
-		case
-		when result == 1
-			@player_1.declare_victorious
-			@player_2.declare_defeated
-			game_over = true
-		end
-
-		loop do
-			player_move = @player_2.take_a_turn(board)
-			break if @board.check(player_move)
-		end
-		@board.insert(player_move, -1)
-		result = @board.victory?
-		case
-		when result == -1
-			@player_1.declare_victorious
-			@player_2.declare_defeated
-			game_over = true
+			player_move = player_turn @player_1
+			game_over = resolve_move(player_move, 'X')
+			break if game_over
+			player_move = player_turn @player_2
+			game_over = resolve_move(player_move, 'O')
+			break if game_over
 		end
 	end
 
+	def resolve_move(player_move, token)
+		@board.insert(player_move, token)
+		check_victory_condition
+	end
 
+	def check_victory_condition
+		result = @board.victory?
+		puts "status: #{result}\n"
+
+		if result == 'X'
+			@player_1.declare_victorious @board
+			@player_2.declare_defeated @board
+			true
+		elsif result == 'O'
+			@player_2.declare_victorious @board
+			@player_1.declare_defeated @board
+			true
+		elsif result == 'DRAW'
+			@player_1.declare_draw @board
+			@player_2.declare_draw @board
+			true
+		else
+			false
+		end
+	end
+
+	def player_turn(player)
+		player_move = nil
+		loop do
+			player_move = player.take_a_turn(@board)
+			break if @board.legal_move?(player_move)
+			puts "#{player_move} illegal\n"
+		end
+		player_move
+	end
 end

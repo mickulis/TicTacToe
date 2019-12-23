@@ -13,12 +13,52 @@ class BoardTest < Minitest::Test
 		end
 	end
 
-	def test_win_1st_row_with_X__X_wins
-		board = Board.new
-		board.insert(0, 'X')
-		board.insert(1, 'X')
-		board.insert(2, 'X')
-		assert_equal('X', board.victory?)
+	[[0, 1, 2],
+	 [3, 4, 5],
+	 [6, 7, 8],
+	 [0, 3, 6],
+	 [1, 4, 7],
+	 [2, 5, 8],
+	 [0, 4, 8],
+	 [2, 4, 6]].each do |series_of_moves|
+		define_method("test_perform_series_of_winning_moves_for_x_#{series_of_moves}__success") do
+			board = Board.new
+			series_of_moves.each do |move|
+				board.insert(move, 'X')
+			end
+			assert_equal('X', board.victory?)
+		end
+		define_method("test_perform_series_of_winning_moves_for_o_#{series_of_moves}__success") do
+			board = Board.new
+			series_of_moves.each do |move|
+				board.insert(move, 'O')
+			end
+			assert_equal('O', board.victory?)
+		end
+	end
+
+	[[0, 4, 1, 6, 2],
+	 [3, 1, 4, 2, 5],
+	 [6, 1, 7, 2, 8],
+	 [0, 1, 3, 2, 6],
+	 [1, 1, 4, 2, 7],
+	 [2, 1, 5, 2, 8],
+	 [0, 1, 4, 2, 8],
+	 [2, 1, 4, 2, 6]].each do |series_of_moves|
+		define_method("test_perform_series_of_alternating_moves_where_x_wins_#{series_of_moves}__x_wins") do
+			board = Board.new
+			turn = 0
+			series_of_moves.each do |move|
+				if turn%2 == 0
+					token = 'X'
+				else
+					token = 'O'
+				end
+				board.insert(move, token)
+				turn = turn + 1
+			end
+			assert_equal('X', board.victory?)
+		end
 	end
 
 	def test_fill_board__full
