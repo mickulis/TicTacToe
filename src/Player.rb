@@ -37,7 +37,7 @@ class Player
 	def display(board)
 		array = Array.new
 		for i in 0..8 do
-			value = board.get_position(i)
+			value = board.check_position(i)
 			if value.nil?
 				array[i] = "\x1b[38;2;100;100;100m#{i}\x1b[38;2;255;255;255m"
 			else

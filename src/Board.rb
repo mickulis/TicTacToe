@@ -1,4 +1,3 @@
-
 class Board
 	def initialize()
 		@board = Array.new
@@ -19,7 +18,7 @@ class Board
 		end
 	end
 
-	def get_position(position)
+	def check_position(position)
 		if @board[position].nil?
 			nil
 		elsif @board[position] > 0
@@ -31,7 +30,7 @@ class Board
 		end
 	end
 
-	# true if empty position, false if position taken, ArgumentError if invalid position
+	# true if empty position, false if position taken, invalid argument or anything else
 	def legal_move?(position)
 		if position.nil?
 			false
@@ -66,6 +65,12 @@ class Board
 
 	private
 
+	#
+	# 0/1/2 - 1st/2nd/3rd column
+	# 3/4/5 - 1st/2nd/3rd row
+	#     6 - top left - bottom right diagonal
+	#     7 - bottom left - top right diagonal
+	#
 	def add_victory_points(position, value)
 		#row
 		@victory_points[position/3 + 3] += value
