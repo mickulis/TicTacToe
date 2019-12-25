@@ -1,5 +1,5 @@
 class Board
-	def initialize()
+	def initialize
 		@board = Array.new
 		@victory_points = Array.new(8, 0)
 		@filled = 0

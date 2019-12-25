@@ -1,5 +1,9 @@
 class Game
+	@@id = 0
+
 	def initialize(board, player_1, player_2)
+		@id = @@id
+		@@id = @@id + 1
 		@board = board
 		@player_1 = player_1
 		@player_2 = player_2
@@ -28,16 +32,16 @@ class Game
 		puts "status: #{result}\n"
 
 		if result == 'X'
-			@player_1.declare_victorious @board
-			@player_2.declare_defeated @board
+			@player_1.declare_victorious @board, @id
+			@player_2.declare_defeated @board, @id
 			true
 		elsif result == 'O'
-			@player_2.declare_victorious @board
-			@player_1.declare_defeated @board
+			@player_2.declare_victorious @board, @id
+			@player_1.declare_defeated @board, @id
 			true
 		elsif result == 'DRAW'
-			@player_1.declare_draw @board
-			@player_2.declare_draw @board
+			@player_1.declare_draw @board, @id
+			@player_2.declare_draw @board, @id
 			true
 		else
 			false
@@ -47,7 +51,7 @@ class Game
 	def player_turn(player)
 		player_move = nil
 		loop do
-			player_move = player.take_a_turn(@board)
+			player_move = player.take_a_turn(@board, @id)
 			break if @board.legal_move?(player_move)
 			puts "#{player_move} illegal\n"
 		end

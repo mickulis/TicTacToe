@@ -3,22 +3,22 @@ class Player
 		@name = name
 	end
 
-	def declare_victorious(board)
+	def declare_victorious(board, game_id)
 		puts "#{@name} won\n"
 		display(board)
 	end
 
-	def declare_defeated(board)
+	def declare_defeated(board, game_id)
 		puts "#{@name} lost\n"
 		display(board)
 	end
 
-	def declare_draw(board)
+	def declare_draw(board, game_id)
 		puts "#{@name} drawed\n"
 		display(board)
 	end
 
-	def take_a_turn(board)
+	def take_a_turn(board, game_id)
 		Gem.win_platform? ? (system "cls") : (system "clear")
 		puts "Your turn #{@name}\n"
 		display(board)
