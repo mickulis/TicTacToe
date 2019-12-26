@@ -3,19 +3,19 @@ class Player
 		@name = name
 	end
 
-	def declare_victorious(board, game_id)
+	def declare_victorious(board, game_id, num)
 		puts "#{@name} won\n"
 		display(board)
 		gets
 	end
 
-	def declare_defeated(board, game_id)
+	def declare_defeated(board, game_id, num)
 		puts "#{@name} lost\n"
 		display(board)
 		gets
 	end
 
-	def declare_draw(board, game_id)
+	def declare_draw(board, game_id, num)
 		puts "#{@name} drawed\n"
 		display(board)
 		gets
