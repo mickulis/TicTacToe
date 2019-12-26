@@ -63,6 +63,33 @@ class Board
 		@filled == 9
 	end
 
+	def to_s
+		array = Array.new
+		for i in 0..8 do
+			value = self.check_position(i)
+			if value.nil?
+				array[i] = "\x1b[38;2;100;100;100m#{i}\x1b[38;2;255;255;255m"
+			else
+				array[i] = value
+			end
+		end
+
+		" #{array[0]} | #{array[1]} | #{array[2]}\n"\
+		" --+---+--\n"\
+		" #{array[3]} | #{array[4]} | #{array[5]}\n"\
+		" --+---+--\n"\
+		" #{array[6]} | #{array[7]} | #{array[8]}\n"
+	end
+
+	def to_a
+		array = Array.new
+		(0..8).each do |position|
+			array[position] = self.check_position(position)
+		end
+		array
+	end
+
+
 	private
 
 	#
@@ -95,6 +122,5 @@ class Board
 			raise ArgumentError.new("invalid token")
 		end
 	end
-
 end
 

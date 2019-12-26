@@ -1,25 +1,31 @@
+require_relative 'Board'
 class Game
 	@@id = 0
 
-	def initialize(board, player_1, player_2)
+	def initialize(player_1, player_2, board = Board.new)
 		@id = @@id
 		@@id = @@id + 1
 		@board = board
 		@player_1 = player_1
 		@player_2 = player_2
+		@game_over = false
+		@winner = nil
 	end
 
 	def start
-		puts "start\n"
-		@game_over = false
-		loop do
-			player_move = player_turn @player_1
-			game_over = resolve_move(player_move, 'X')
-			break if game_over
-			player_move = player_turn @player_2
-			game_over = resolve_move(player_move, 'O')
-			break if game_over
+		if @game_over
+			raise Exception.new("GAME #{@id} IS ALREADY OVER")
 		end
+		puts "starting game #{@id}\n"
+		loop do
+			break if @game_over
+			player_move = player_turn @player_1, 1
+			@game_over = resolve_move(player_move, 'X')
+			break if @game_over
+			player_move = player_turn @player_2, 2
+			@game_over = resolve_move(player_move, 'O')
+		end
+		puts "game #{@id} is over, result: #{@winner}\n"
 	end
 
 	def resolve_move(player_move, token)
@@ -28,32 +34,31 @@ class Game
 	end
 
 	def check_victory_condition
-		result = @board.victory?
-		puts "status: #{result}\n"
+		@winner = @board.victory?
+		#puts "status: #{result}\n"
 
-		if result == 'X'
-			@player_1.declare_victorious @board, @id
-			@player_2.declare_defeated @board, @id
+		if @winner == 'X'
+			@player_2.declare_defeated @board, @id, 2
+			@player_1.declare_victorious @board, @id, 1
 			true
-		elsif result == 'O'
-			@player_2.declare_victorious @board, @id
-			@player_1.declare_defeated @board, @id
+		elsif @winner == 'O'
+			@player_2.declare_victorious @board, @id, 2
+			@player_1.declare_defeated @board, @id, 1
 			true
-		elsif result == 'DRAW'
-			@player_1.declare_draw @board, @id
-			@player_2.declare_draw @board, @id
+		elsif @winner == 'DRAW'
+			@player_2.declare_draw @board, @id, 2
+			@player_1.declare_draw @board, @id, 1
 			true
 		else
 			false
 		end
 	end
 
-	def player_turn(player)
+	def player_turn(player, num)
 		player_move = nil
 		loop do
-			player_move = player.take_a_turn(@board, @id)
+			player_move = player.take_a_turn(@board, @id, num)
 			break if @board.legal_move?(player_move)
-			puts "#{player_move} illegal\n"
 		end
 		player_move
 	end
