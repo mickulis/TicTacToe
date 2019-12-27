@@ -1,7 +1,7 @@
 language: ruby
 env:
   global:
-    - CC_TEST_REPORTER_ID=PLACEHOLDER
+    - CC_TEST_REPORTER_ID=af34ce54e1fabdb5b5efa4c552ce00d5a63da936c2b87de8d1cd51c942d2d5d8
 rvm:
   - 2.5.1
   - 2.6.2
