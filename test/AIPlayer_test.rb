@@ -1,3 +1,4 @@
+require_relative '../test_helper'
 require 'minitest/autorun'
 require_relative '../src/AIPlayer/'
 # Common test data version: 1.7.0 cacf1f1

@@ -1,1 +1,3 @@
 [![Build Status](https://travis-ci.org/mickulis/TicTacToe.svg?branch=master)](https://travis-ci.org/mickulis/TicTacToe)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c013371261aa45cd7ed6/maintainability)](https://codeclimate.com/github/mickulis/TicTacToe/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c013371261aa45cd7ed6/test_coverage)](https://codeclimate.com/github/mickulis/TicTacToe/test_coverage)
