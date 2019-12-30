@@ -15,7 +15,6 @@ Gem.win_platform? ? (system "cls") : (system "clear")
 # - delete ai (by name or id)
 # - quit
 
-
 p1 = Player.new "p1"
 p2 = Player.new "p2"
 ai1 = AIPlayer.new("ai1", Random.new)

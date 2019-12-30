@@ -8,6 +8,8 @@ class Player
 	end
 
 	# game_id and num are used by AIPlayer
+	# input: board: Board, game_id: (not used), num: (not used)
+	# output: int (not used)
 	def declare_victorious(board, game_id, num)
 		puts "#{@name} won\n"
 		display(board)
@@ -15,6 +17,8 @@ class Player
 	end
 
 	# game_id and num are used by AIPlayer
+	# # input: board: Board, game_id: (not used), num: (not used)
+	# # output: int (not used)
 	def declare_defeated(board, game_id, num)
 		puts "#{@name} lost\n"
 		display(board)
@@ -22,6 +26,8 @@ class Player
 	end
 
 	# game_id and num are used by AIPlayer
+	# input: board: Board, game_id: (not used), num: (not used)
+	# output: int (not used)
 	def declare_draw(board, game_id, num)
 		puts "#{@name} drawed\n"
 		display(board)
@@ -30,6 +36,8 @@ class Player
 
 	# game_id and num are used by AIPlayer
 	# displays board, then takes input (integer) until it is recognized as a valid move on the board
+	# input: board: Board, game_id: (not used), num: (not used)
+	# output: int (validated by board)
 	def take_a_turn(board, game_id, num)
 		# Gem.win_platform? ? (system "cls") : (system "clear")
 		puts "Your turn #{@name}\n"
@@ -54,6 +62,7 @@ class Player
 	# "13a" -> 13
 	# "1a3" -> 1
 	# "a13" -> 0
+	# output: int
 	def get_input
 		input = gets
 		input.to_i

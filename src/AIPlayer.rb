@@ -30,6 +30,7 @@ class AIPlayer
 		3 => 5, 4 => 4, 5 => 3,
 		6 => 8, 7 => 7, 8 => 6}
 
+	# input: name: string, rng: Random)
 	def initialize(name, rng = Random.new)
 		@rng = rng
 		@name = name
@@ -43,24 +44,27 @@ class AIPlayer
 		@games_move_history = [nil, Hash.new, Hash.new]
 	end
 
-	# if victorious, don't change behavious
-	# remove the game feom history
+	# if victorious, don't change behaviour
+	# remove the game from history
 	# board argument is used by real player class
+	# input: board: (not used), game_id: int, num: int (1..2)
 	def declare_victorious(board, game_id, num)
 		@games_move_history[num].delete(game_id)
 	end
 
 	# if drawed, set last move as "drawing"
-	# remove the game feom history
+	# remove the game from history
 	# board argument is used by real player class
+	# # input: board: (not used), game_id: int, num: int (1..2)
 	def declare_draw(board, game_id, num)
 		mark_last_move_as_drawing(game_id, num)
 		@games_move_history[num].delete(game_id)
 	end
 
 	# if defeated, set last move as "losing"
-	# remove the game feom history
+	# remove the game from history
 	# board argument is used by real player class
+	# # input: board: (not used), game_id: int, num: int (1..2)
 	def declare_defeated(board, game_id, num)
 		mark_last_move_as_losing(game_id, num)
 		@games_move_history[num].delete(game_id)
@@ -72,6 +76,7 @@ class AIPlayer
 	# recursive
 	#
 	# refactor - method extraction required
+	# # input: game_id: int, num: int (1..2)
 	def mark_last_move_as_losing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
@@ -109,6 +114,7 @@ class AIPlayer
 	# recursive
 	#
 	# refactor - method extraction required
+	# # input: game_id: int, num: int (1..2)
 	def mark_last_move_as_drawing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
@@ -132,6 +138,7 @@ class AIPlayer
 	# find a move
 	# add move with board hash to the history
 	# return move converted into a move on the actual board by reverting rotation and reflection of Board_Info object
+	# # input: board: Board, game_id: int, num: int (1..2)
 	def take_a_turn(board, game_id, player_number)
 		if !(@games_move_history[player_number].has_key? game_id)
 			new_move_queue = Array.new
@@ -148,16 +155,18 @@ class AIPlayer
 	# provided array is rotated and reflected for a total of 8 isomorphic boards
 	# each version's hash is calculated
 	# if any of the hashes already has a list of moves mapped to it, that board's info object is returned
-	# otherwise original board's object is returned
+	# otherwise original board's object is returned (first)
+	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil)
+	# output: Board_Info
 	def get_board_info_with_hash(board_array)
-		hashes_info = Array.new
+		board_info_list = Array.new
 		(0..3).each do |rotation|
-			hashes_info.push(AIPlayer.calculate_board_hash(board_array, rotation, false))
-			hashes_info.push(AIPlayer.calculate_board_hash(board_array, rotation, true))
+			board_info_list.push(AIPlayer.calculate_board_hash(board_array, rotation, false))
+			board_info_list.push(AIPlayer.calculate_board_hash(board_array, rotation, true))
 		end
-		result = hashes_info.find { |board_hash| @winning_moves.has_key?(board_hash.board_hash) || @drawing_moves.has_key?(board_hash.board_hash) || @losing_moves.has_key?(board_hash.board_hash) }
+		result = board_info_list.find { |board_info| @winning_moves.has_key?(board_info.board_hash) || @drawing_moves.has_key?(board_info.board_hash) || @losing_moves.has_key?(board_info.board_hash) }
 		if result.nil?
-			result = hashes_info.first
+			result = board_info_list.first
 		end
 		result
 	end
@@ -174,6 +183,8 @@ class AIPlayer
 	# 		and lists of drawing and losing moves are empty
 	#
 	# after first list of moves is found/created, a move is chosen at random
+	# input: board_hash: int, array: Array(size: 9, possible values: 'X', 'O', nil)
+	# output: int (0..8)
 	def find_move(board_hash, array)
 		if @winning_moves.has_key?(board_hash) && @winning_moves[board_hash].any?
 			puts "found winning moves"
@@ -196,6 +207,8 @@ class AIPlayer
 
 	# move = integer
 	# undoes rotation and reflection applied to the board_array when searching for existing board hash
+	# input: move: int (0..8), rotation: int (0..3), reflection: true/false
+	# output: int (0..8)
 	def self.convert(move, rotation, reflection)
 		converted_move = AIPlayer.unrotate(move, rotation)
 		if reflection
@@ -207,6 +220,8 @@ class AIPlayer
 	# move = integer
 	# returns value that selected move would have if a board was rotated counterclockwise
 	# recursive
+	# 	# input: move: int (0..8), rotation: int (0..3)
+	# 	# output: int (0..8)
 	def self.unrotate(move, rotation)
 		if rotation == 0
 			move
@@ -224,6 +239,8 @@ class AIPlayer
 	# each unique board state should have unique hash
 	# no integer overflow detected
 	# returns Board_Info object that contains hash, rotation and reflection that lead to this isomorphic version of board, and resulting board array
+	# 	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil), rotation: int (0..3), reflection: true/false
+	# 	# output: Board_Info
 	def self.calculate_board_hash(board_array, rotation, reflection)
 		if reflection
 			array = AIPlayer.reflect(board_array)
@@ -246,15 +263,18 @@ class AIPlayer
 		Board_Info.new(board_hash, rotation, reflection, array)
 	end
 
-	# array = array of size 9, representing board
+	# reflects board left <-> right
+	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil)
+	# output: int (0..8)
 	def self.reflect(array)
 		[array[2], array[1], array[0],
 		 array[5], array[4], array[3],
 		 array[8], array[7], array[6]]
 	end
 
-	# array = array of size 9, representing board
 	# recursive
+	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil), rotation: int (0..3)
+	# output: int (0..8)
 	def self.rotate_clockwise(array, rotation = 0)
 		if rotation == 0
 			array
@@ -269,6 +289,8 @@ end
 
 # contains array and its hash, as well as rotation and reflection required to get that array from one representing actual game state
 class Board_Info
+
+	# input: board_hash: int, rotation: int (0..3), reflection true/false, array: Array (size: 9, possible values: 'X', 'O', nil)
 	def initialize(board_hash, rotation, reflection, array)
 		@board_hash = board_hash
 		@rotation = rotation
@@ -295,6 +317,8 @@ end
 
 # contains move chosen by ai and hash of a specific isomorphic version of actual board state
 class MoveHistoryEntry
+
+	#input: move: int (0..8), board_hash: int
 	def initialize(move, board_hash)
 		@board_hash = board_hash
 		@move = move

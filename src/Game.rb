@@ -32,6 +32,8 @@ class Game
 	end
 
 	# pass player's move to the board and check if the game is over
+	# input: player_move: int (0..8), token: string ('X' or 'O')
+	# output: true/false
 	def resolve_move(player_move, token)
 		@board.insert(player_move, token)
 		check_victory_condition
@@ -40,6 +42,7 @@ class Game
 	# if there is a winner, declare players as winner and loser, return true
 	# if there is a draw, declare draw for both players, return true
 	# if a game is undecided return false
+	# output: true/false
 	def check_victory_condition
 		@winner = @board.victory?
 
@@ -62,6 +65,7 @@ class Game
 
 	# ask player for a valid move until a valid move is provided
 	# @id and player_number used only by AI
+	#
 	def player_turn(player, player_number)
 		player_move = nil
 		loop do
