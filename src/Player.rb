@@ -1,4 +1,8 @@
 class Player
+
+	# this class is responsible for displaying board state and recieving+parsing human player moves
+	# communication by standard input and standard output
+
 	def initialize(name)
 		@name = name
 	end
@@ -21,26 +25,31 @@ class Player
 		gets
 	end
 
+	# displays board, then takes input (integer) until it is recognized as a valid move on the board
 	def take_a_turn(board, game_id, num)
 		# Gem.win_platform? ? (system "cls") : (system "clear")
 		puts "Your turn #{@name}\n"
 		display(board)
 		input = get_input.to_i
 		loop do
-			#puts "input: #{input}: #{board.legal_move?(input)}\n"
 			break if board.legal_move?(input)
-			# Gem.win_platform? ? (system "cls") : (system "clear")
-			#puts "input: #{input}: #{board.legal_move?(input)}\n"
 			display(board)
 			input = get_input.to_i
 		end
 		input
 	end
 
+	# board.to_s
 	def display(board)
 		puts board
 	end
 
+	# takes input and converts to integer
+	# only leading digits are taken into account
+	# if string starts with anything other than a digit, to_i returns 0.
+	# "13a" -> 13
+	# "1a3" -> 1
+	# "a13" -> 0
 	def get_input
 		input = gets
 		input.to_i

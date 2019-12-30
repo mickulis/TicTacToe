@@ -2,6 +2,7 @@ require_relative 'Board'
 class Game
 	@@id = 0
 
+	# @@id = global counter in case of multiple parallel games with the same AI
 	def initialize(player_1, player_2, board = Board.new)
 		@id = @@id
 		@@id = @@id + 1
@@ -12,6 +13,8 @@ class Game
 		@winner = nil
 	end
 
+	# asks each player for a valid input and passes it to board until a winner or draw is declared
+	# if a game is already over, it cannot be restarted or resumed
 	def start
 		if @game_over
 			raise Exception.new("GAME #{@id} IS ALREADY OVER")
@@ -28,14 +31,17 @@ class Game
 		puts "game #{@id} is over, result: #{@winner}\n"
 	end
 
+	# pass player's move to the board and check if the game is over
 	def resolve_move(player_move, token)
 		@board.insert(player_move, token)
 		check_victory_condition
 	end
 
+	# if there is a winner, declare players as winner and loser, return true
+	# if there is a draw, declare draw for both players, return true
+	# if a game is undecided return false
 	def check_victory_condition
 		@winner = @board.victory?
-		#puts "status: #{result}\n"
 
 		if @winner == 'X'
 			@player_2.declare_defeated @board, @id, 2
@@ -54,10 +60,12 @@ class Game
 		end
 	end
 
-	def player_turn(player, num)
+	# ask player for a valid move until a valid move is provided
+	# @id and player_number used only by AI
+	def player_turn(player, player_number)
 		player_move = nil
 		loop do
-			player_move = player.take_a_turn(@board, @id, num)
+			player_move = player.take_a_turn(@board, @id, player_number)
 			break if @board.legal_move?(player_move)
 		end
 		player_move

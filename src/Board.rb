@@ -1,11 +1,12 @@
 class Board
 	def initialize
 		@board = Array.new
-		@victory_points = Array.new(8, 0)
+		@victory_points = Array.new(8, 0) # explained in add_victory_points
 		@filled = 0
 	end
 
-	# true if valid move, false if invalid, ArgumentError if
+	# true if valid move, false if invalid, ArgumentError if wrong token
+	# token = 'X' or 'O'
 	def insert(position, token)
 		value = token_to_value(token)
 		if legal_move?(position)
@@ -18,6 +19,7 @@ class Board
 		end
 	end
 
+	# if position is taken, returns token, otherwise returns nil
 	def check_position(position)
 		if @board[position].nil?
 			nil
@@ -81,6 +83,7 @@ class Board
 		" #{array[6]} | #{array[7]} | #{array[8]}\n"
 	end
 
+	# returns copy of @board, but always of size 9
 	def to_a
 		array = Array.new
 		(0..8).each do |position|
@@ -97,6 +100,10 @@ class Board
 	# 3/4/5 - 1st/2nd/3rd row
 	#     6 - top left - bottom right diagonal
 	#     7 - bottom left - top right diagonal
+	#
+	# +1 if 'X', -1 if 'O'
+	# +3 anywhere = 'X' victory
+	# -3 anywhere = 'O' victory
 	#
 	def add_victory_points(position, value)
 		#row

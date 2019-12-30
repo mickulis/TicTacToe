@@ -1,22 +1,29 @@
 class RandomPlayer
+
+	# AI that doesn't learn and makes moves randomly
+
 	def initialize(name)
 		@name = name
+		@rng = Random.new
 	end
 
-	def declare_victorious(board, game_id)
-
-	end
-
-	def declare_defeated(board, game_id)
-
-	end
-
-	def declare_draw(board, game_id)
+	# does nothing
+	def declare_victorious(board, game_id, player_number)
 
 	end
 
-	def take_a_turn(board, game_id)
-		Random.rand(9)
+	# does nothing
+	def declare_defeated(board, game_id, player_number)
+
+	end
+
+	# does nothing
+	def declare_draw(board, game_id, player_number)
+
+	end
+
+	def take_a_turn(board, game_id, player_number)
+		@rng.rand(9)
 	end
 end
 
