@@ -7,24 +7,28 @@ class Player
 		@name = name
 	end
 
+	# game_id and num are used by AIPlayer
 	def declare_victorious(board, game_id, num)
 		puts "#{@name} won\n"
 		display(board)
 		gets
 	end
 
+	# game_id and num are used by AIPlayer
 	def declare_defeated(board, game_id, num)
 		puts "#{@name} lost\n"
 		display(board)
 		gets
 	end
 
+	# game_id and num are used by AIPlayer
 	def declare_draw(board, game_id, num)
 		puts "#{@name} drawed\n"
 		display(board)
 		gets
 	end
 
+	# game_id and num are used by AIPlayer
 	# displays board, then takes input (integer) until it is recognized as a valid move on the board
 	def take_a_turn(board, game_id, num)
 		# Gem.win_platform? ? (system "cls") : (system "clear")
