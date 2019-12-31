@@ -3,19 +3,63 @@ require 'minitest/autorun'
 require_relative '../src/Game/'
 # Common test data version: 1.7.0 cacf1f1
 class GameTest < Minitest::Test
-	def test_fill_board__full
+	def test_start_game_both_players_take_a_single_turn_X_wins
 		p1 = MiniTest::Mock.new
+		p2 = MiniTest::Mock.new
+		board = MiniTest::Mock.new
+		p1.expect(:take_a_turn, 0, [board, Integer, 1])
+		p1.expect(:declare_victorious, nil, [board, Integer, 1])
+		p2.expect(:take_a_turn, 1, [board, Integer, 2])
+		p2.expect(:declare_defeated, nil, [board, Integer, 2])
+		board.expect(:legal_move?, true, [0])
+		board.expect(:insert, nil, [0, 'X'])
+		board.expect(:victory?, false)
+		board.expect(:legal_move?, true, [1])
+		board.expect(:insert, nil, [1, 'O'])
+		board.expect(:victory?, 'X')
+		game = Game.new(p1, p2, board)
+		game.start
+		assert_equal('X', game.winner?)
+		p1.verify
+		p2.verify
+		board.verify
 
-		board = Board.new
-		board.insert(0, 'X')
-		board.insert(1, 'X')
-		board.insert(2, 'X')
-		board.insert(3, 'X')
-		board.insert(4, 'X')
-		board.insert(5, 'X')
-		board.insert(6, 'X')
-		board.insert(7, 'X')
-		board.insert(8, 'X')
-		assert_equal(true, board.full?)
+
+	end
+
+	def test_start_game_X_wins_in_one_move
+		p1 = MiniTest::Mock.new
+		p2 = MiniTest::Mock.new
+		board = MiniTest::Mock.new
+		p1.expect(:take_a_turn, 0, [board, Integer, 1])
+		p1.expect(:declare_victorious, nil, [board, Integer, 1])
+		p2.expect(:declare_defeated, nil, [board, Integer, 2])
+		board.expect(:legal_move?, true, [0])
+		board.expect(:insert, nil, [0, 'X'])
+		board.expect(:victory?, 'X')
+		game = Game.new(p1, p2, board)
+		game.start
+		assert_equal('X', game.winner?)
+		p1.verify
+		p2.verify
+		board.verify
+	end
+
+	def test_start_game_X_loses_in_one_move
+		p1 = MiniTest::Mock.new
+		p2 = MiniTest::Mock.new
+		board = MiniTest::Mock.new
+		p1.expect(:take_a_turn, 0, [board, Integer, 1])
+		p1.expect(:declare_defeated, nil, [board, Integer, 1])
+		p2.expect(:declare_victorious, nil, [board, Integer, 2])
+		board.expect(:legal_move?, true, [0])
+		board.expect(:insert, nil, [0, 'X'])
+		board.expect(:victory?, 'O')
+		game = Game.new(p1, p2, board)
+		game.start
+		assert_equal('O', game.winner?)
+		p1.verify
+		p2.verify
+		board.verify
 	end
 end

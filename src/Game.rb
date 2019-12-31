@@ -74,4 +74,9 @@ class Game
 		end
 		player_move
 	end
+
+	# output: nil, 'X', 'O', or 'DRAW'
+	def winner?
+		@winner
+	end
 end
