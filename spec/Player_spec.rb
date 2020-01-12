@@ -63,12 +63,23 @@ RSpec.describe Player do
             allow($stdin).to receive(:gets).and_return(illegal_inp, legal_move_inp)
             # Insert wrong input and then correct one
             legal_move = test_player.take_a_turn(board, nil, nil)          
-            expect(legal_move).to(eq(legal_move_inp.to_i))                
+            expect(legal_move).to(eq(legal_move_inp.to_i))  
+            # Board should not be updated
+            expect(board.filled).to(eq(0))
         end
         it 'tries to do illegal duplicated move' do
-            # output = $stdout.string.split("\n")
-            # output.select{|line| line.include?(player_name)}.count
-
+            board = Board.new
+            empty_board = board.to_s
+            allow($stdin).to receive(:gets).and_return('5', '5', '0')
+            legal_move = test_player.take_a_turn(board, nil, nil)
+            board.insert(legal_move, "X")
+            $stdout = StringIO.new
+            test_player.take_a_turn(board, nil, nil)
+            output = $stdout.string.split("\n")
+            # Board should be empty
+            expect(board.filled).to(eq(1))
+            expect(output.first).to(eq("Your turn #{player_name}"))
+            expect(output.drop(1).take(5).join('')).to(eq(output.drop(6).take(5).join('')))
         end
     end
   end

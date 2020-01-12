@@ -1,4 +1,5 @@
 class Board
+	attr_accessor :filled
 	def initialize
 		@board = Array.new
 		@victory_points = Array.new(8, 0) # explained in add_victory_points
