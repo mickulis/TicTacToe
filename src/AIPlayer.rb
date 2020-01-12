@@ -80,31 +80,10 @@ class AIPlayer
 	def mark_last_move_as_losing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
-			#puts "last move: #{last_move.move}"
 			if @winning_moves[last_move.board_hash].include?(last_move.move)
-				#puts "last move: #{last_move.move}, from winning to losing"
-				@winning_moves[last_move.board_hash].delete(last_move.move)
-				@losing_moves[last_move.board_hash].push(last_move.move)
-				if @winning_moves[last_move.board_hash].empty?
-					if @drawing_moves[last_move.board_hash].empty?
-						#puts "no more winning or drawing moves, changing previous move to losing"
-						mark_last_move_as_losing(game_id, player_number)
-					else
-						#puts "no more winning moves, changing previous move to drawing"
-						mark_last_move_as_drawing(game_id, player_number)
-					end
-				end
+				move_winning_to_losing(game_id, last_move, player_number)
 			elsif @drawing_moves[last_move.board_hash].include?(last_move.move)
-				#puts "last move: #{last_move.move}, from drawing to losing"
-				@drawing_moves[last_move.board_hash].delete(last_move.move)
-				@losing_moves[last_move.board_hash].push(last_move.move)
-
-				if @drawing_moves[last_move.board_hash].empty?
-					#puts "no more winning or drawing moves, changing previous move to losing"
-					mark_last_move_as_losing(game_id, player_number)
-				end
-			else
-				#puts "last move: #{last_move.move}, was losing already"
+				move_drawing_to_losing(game_id, last_move, player_number)
 			end
 		end
 	end
@@ -118,17 +97,8 @@ class AIPlayer
 	def mark_last_move_as_drawing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
-			#puts "last move: #{last_move.move}"
 			if @winning_moves[last_move.board_hash].include?(last_move.move)
-				#puts "last move: #{last_move.move}, from winning to drawing"
-				@winning_moves[last_move.board_hash].delete(last_move.move)
-				@drawing_moves[last_move.board_hash].push(last_move.move)
-				if @winning_moves[last_move.board_hash].empty?
-					#puts "no more winning moves, changing previous move to drawing"
-					mark_last_move_as_drawing(game_id, player_number)
-				end
-			else
-				#puts "last move: #{last_move.move}, was drawing already"
+				move_winning_to_drawing(game_id, last_move, player_number)
 			end
 		end
 	end
@@ -283,6 +253,40 @@ class AIPlayer
 							 array[7], array[4], array[1],
 							 array[8], array[5], array[2]]
 			AIPlayer.rotate_clockwise(rotated_array, rotation - 1)
+		end
+	end
+
+	private
+
+	def move_winning_to_drawing(game_id, last_move, player_number)
+		@winning_moves[last_move.board_hash].delete(last_move.move)
+		@drawing_moves[last_move.board_hash].push(last_move.move)
+		if @winning_moves[last_move.board_hash].empty?
+			mark_last_move_as_drawing(game_id, player_number)
+		end
+	end
+
+	def move_drawing_to_losing(game_id, last_move, player_number)
+		@drawing_moves[last_move.board_hash].delete(last_move.move)
+		@losing_moves[last_move.board_hash].push(last_move.move)
+
+		if @drawing_moves[last_move.board_hash].empty?
+			#puts "no more winning or drawing moves, changing previous move to losing"
+			mark_last_move_as_losing(game_id, player_number)
+		end
+	end
+
+	def move_winning_to_losing(game_id, last_move, player_number)
+		@winning_moves[last_move.board_hash].delete(last_move.move)
+		@losing_moves[last_move.board_hash].push(last_move.move)
+		if @winning_moves[last_move.board_hash].empty?
+			if @drawing_moves[last_move.board_hash].empty?
+				#puts "no more winning or drawing moves, changing previous move to losing"
+				mark_last_move_as_losing(game_id, player_number)
+			else
+				#puts "no more winning moves, changing previous move to drawing"
+				mark_last_move_as_drawing(game_id, player_number)
+			end
 		end
 	end
 end
