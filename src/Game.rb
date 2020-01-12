@@ -19,14 +19,12 @@ class Game
 		if @game_over
 			raise Exception.new("GAME #{@id} IS ALREADY OVER")
 		end
-		puts "starting game #{@id}\n"
-		player_number = 1
 		loop do
-			@game_over = player_turn @player_1, player_number
-			player_number = player_number % 2 + 1
+			@game_over = player_turn @player_1, 1
+			break if @game_over
+			@game_over = player_turn @player_2, 2
 			break if @game_over
 		end
-		puts "game #{@id} is over, result: #{@winner}\n"
 	end
 
 	# pass player's move to the board and check if the game is over
