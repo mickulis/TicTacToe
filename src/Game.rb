@@ -9,6 +9,7 @@ class Game
 		@board = board
 		@player_1 = player_1
 		@player_2 = player_2
+		@players = [nil, player_1, player_2]
 		@game_over = false
 		@winner = nil
 	end
@@ -19,10 +20,10 @@ class Game
 		if @game_over
 			raise Exception.new("GAME #{@id} IS ALREADY OVER")
 		end
+		player_number = 1
 		loop do
-			@game_over = player_turn @player_1, 1
-			break if @game_over
-			@game_over = player_turn @player_2, 2
+			@game_over = player_turn @players[player_number], player_number
+			player_number = player_number % 2 + 1
 			break if @game_over
 		end
 	end
