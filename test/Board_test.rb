@@ -75,7 +75,16 @@ class BoardTest < Minitest::Test
 		board.insert(8, 'X')
 		assert_equal(true, board.full?)
 	end
-
+	def test_check_position_and_illegal_moves
+		board = Board.new
+		for i in (0..8) do
+			assert_equal(true, board.legal_move?(i))
+			board.insert(i, 'O')
+		end
+		assert_equal('O', board.check_position(rand(8)))
+		assert_equal(false, board.legal_move?(rand(8)))
+		assert_equal(false, board.legal_move?(nil))
+	end
 	def test_fill_without_winner__draw
 		board = Board.new
 		board.insert(0, 'X')
