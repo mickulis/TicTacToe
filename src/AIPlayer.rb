@@ -237,9 +237,10 @@ class AIPlayer
 	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil)
 	# output: int (0..8)
 	def self.reflect(array)
-		[array[2], array[1], array[0],
-		 array[5], array[4], array[3],
-		 array[8], array[7], array[6]]
+		array[0], array[2] = array[2], array[0]
+		array[3], array[5] = array[5], array[3]
+		array[6], array[8] = array[8], array[6]
+		array
 	end
 
 	# recursive
