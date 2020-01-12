@@ -3,6 +3,7 @@ class Player
 	# this class is responsible for displaying board state and recieving+parsing human player moves
 	# communication by standard input and standard output
 
+	attr_reader :name
 	def initialize(name)
 		@name = name
 	end
