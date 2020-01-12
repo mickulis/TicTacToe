@@ -49,7 +49,7 @@ class AIPlayerTest < Minitest::Test
 		array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
 		reflected = AIPlayer.reflect(array)
 		rotated = AIPlayer.rotate_clockwise(reflected, 1)
-		
+
 		assert_equal('a', rotated[AIPlayer.convert(0, 1, true)])
 		assert_equal('b', rotated[AIPlayer.convert(1, 1, true)])
 		assert_equal('c', rotated[AIPlayer.convert(2, 1, true)])

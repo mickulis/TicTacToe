@@ -118,17 +118,17 @@ class AIPlayer
 	def mark_last_move_as_drawing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
-			puts "last move: #{last_move.move}"
+			#puts "last move: #{last_move.move}"
 			if @winning_moves[last_move.board_hash].include?(last_move.move)
-				puts "last move: #{last_move.move}, from winning to drawing"
+				#puts "last move: #{last_move.move}, from winning to drawing"
 				@winning_moves[last_move.board_hash].delete(last_move.move)
 				@drawing_moves[last_move.board_hash].push(last_move.move)
 				if @winning_moves[last_move.board_hash].empty?
-					puts "no more winning moves, changing previous move to drawing"
+					#puts "no more winning moves, changing previous move to drawing"
 					mark_last_move_as_drawing(game_id, player_number)
 				end
 			else
-				puts "last move: #{last_move.move}, was drawing already"
+				#puts "last move: #{last_move.move}, was drawing already"
 			end
 		end
 	end
@@ -187,20 +187,20 @@ class AIPlayer
 	# output: int (0..8)
 	def find_move(board_hash, array)
 		if @winning_moves.has_key?(board_hash) && @winning_moves[board_hash].any?
-			puts "found winning moves"
+			#puts "found winning moves"
 			list_of_moves = @winning_moves[board_hash]
 		elsif @drawing_moves.has_key?(board_hash) && @drawing_moves[board_hash].any?
-			puts "found drawing moves"
+			#puts "found drawing moves"
 			list_of_moves = @drawing_moves[board_hash]
 		elsif @losing_moves.has_key?(board_hash) && @losing_moves[board_hash].any?
-			puts "found losing moves"
+			#puts "found losing moves"
 			list_of_moves = @losing_moves[board_hash]
 		else
 			list_of_moves = (0..8).to_a.select { |move| array[move].nil? }
 			@winning_moves[board_hash] = list_of_moves
 			@drawing_moves[board_hash] = Array.new
 			@losing_moves[board_hash] = Array.new
-			puts "found no moves, creating new list: #{list_of_moves.to_s}"
+			#puts "found no moves, creating new list: #{list_of_moves.to_s}"
 		end
 		list_of_moves[@rng.rand(list_of_moves.length)]
 	end

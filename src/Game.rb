@@ -20,13 +20,11 @@ class Game
 			raise Exception.new("GAME #{@id} IS ALREADY OVER")
 		end
 		puts "starting game #{@id}\n"
+		player_number = 1
 		loop do
+			@game_over = player_turn @player_1, player_number
+			player_number = player_number % 2 + 1
 			break if @game_over
-			player_move = player_turn @player_1, 1
-			@game_over = resolve_move(player_move, 'X')
-			break if @game_over
-			player_move = player_turn @player_2, 2
-			@game_over = resolve_move(player_move, 'O')
 		end
 		puts "game #{@id} is over, result: #{@winner}\n"
 	end
@@ -72,7 +70,15 @@ class Game
 			player_move = player.take_a_turn(@board, @id, player_number)
 			break if @board.legal_move?(player_move)
 		end
-		player_move
+		resolve_move(player_move, get_token(player_number))
+	end
+
+	def get_token(i)
+		if i == 1
+			'X'
+		elsif i == 2
+			'O'
+		end
 	end
 
 	# output: nil, 'X', 'O', or 'DRAW'
