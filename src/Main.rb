@@ -5,18 +5,16 @@ require_relative 'RandomPlayer'
 require_relative 'Game'
 require_relative 'FakeRandom'
 
-
-@@you = Player.new "you"
-@@ai = AIPlayer.new('AI', Random.new)
-@@random = RandomPlayer.new('random')
-
 class Menu
 	def initialize()
 		@choices = nil
 		@values = nil
 		@num_choices = nil
 		@num_games = 0
-		@players = [@@you, @@ai, @@random]
+		@you = Player.new "you"
+		@ai = AIPlayer.new('AI', Random.new)
+		@random = RandomPlayer.new('random')
+		@players = [@you, @ai, @random]
 	end
 
 	def set_choices(choices)
@@ -61,7 +59,6 @@ class Menu
 		input = gets
 		index = input.to_i
 		usr_2 = @players[index]
-
 		(0..@num_games).each do |a|
 			b = Board.new
 			g = Game.new(usr_1, usr_2, b)
@@ -111,16 +108,6 @@ class Menu
 		exit
 	end
 end
-
-# p2 = Player.new "p2"
-# ai2 = AIPlayer.new('ai2', Random.new)
-# random = RandomPlayer.new('random')
-# def start
-# 	choices = ["new game", "add player", "quit"]
-# 	values = [start_the_game, self.add_player, exit]
-# 	menu = Menu.new(choices, values)
-# 	return menu.menu_loop
-# end
 
 menu = Menu.new()
 menu.set_choices(["new game", "new player", "change number of games to play", "quit"])
