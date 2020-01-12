@@ -13,7 +13,7 @@ class Player
 	def declare_victorious(board, game_id, num)
 		puts "#{@name} won\n"
 		display(board)
-		gets
+		STDIN.gets
 	end
 
 	# game_id and num are used by AIPlayer
@@ -22,7 +22,7 @@ class Player
 	def declare_defeated(board, game_id, num)
 		puts "#{@name} lost\n"
 		display(board)
-		gets
+		STDIN.gets
 	end
 
 	# game_id and num are used by AIPlayer
@@ -31,7 +31,7 @@ class Player
 	def declare_draw(board, game_id, num)
 		puts "#{@name} drawed\n"
 		display(board)
-		gets
+		STDIN.gets
 	end
 
 	# game_id and num are used by AIPlayer
@@ -64,7 +64,7 @@ class Player
 	# "a13" -> 0
 	# output: int
 	def get_input
-		input = gets
+		input = STDIN.gets
 		input.to_i
 	end
 end
