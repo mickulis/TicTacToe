@@ -2,6 +2,7 @@ class RandomPlayer
 
 	# AI that doesn't learn and makes moves randomly
 
+	attr_reader :name
 	def initialize(name)
 		@name = name
 		@rng = Random.new

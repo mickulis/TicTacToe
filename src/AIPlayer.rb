@@ -1,5 +1,6 @@
 class AIPlayer
 
+
 	# BASIC PRINCIPLES:
 	# in order to speed up learning process and conserve memory, isomorphic boards (boards that can be created by rotating or reflecting other boards) are considered to be the same board
 	# each board represents 8 actual boards (possibly identical): 4 by rotations (0~3 rotations) and each of them can be reflected or not (x2)
@@ -30,6 +31,7 @@ class AIPlayer
 		3 => 5, 4 => 4, 5 => 3,
 		6 => 8, 7 => 7, 8 => 6}
 
+	attr_reader :name
 	# input: name: string, rng: Random)
 	def initialize(name, rng = Random.new)
 		@rng = rng
