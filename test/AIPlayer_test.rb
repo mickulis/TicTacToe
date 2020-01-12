@@ -49,23 +49,16 @@ class AIPlayerTest < Minitest::Test
 		array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
 		reflected = AIPlayer.reflect(array)
 		rotated = AIPlayer.rotate_clockwise(reflected, 1)
-		assert_equal(0, AIPlayer.convert(0, 0, false))
-		assert_equal(6, AIPlayer.convert(0, 1, false))
-		assert_equal(8, AIPlayer.convert(0, 2, false))
-		assert_equal(2, AIPlayer.convert(0, 3, false))
-		assert_equal(2, AIPlayer.convert(0, 0, true))
-		assert_equal(8, AIPlayer.convert(0, 1, true))
-		assert_equal(6, AIPlayer.convert(0, 2, true))
-		assert_equal(0, AIPlayer.convert(0, 3, true))
-		# assert_equal('a', rotated[AIPlayer.convert(0, 1, true)])
-		# assert_equal('b', rotated[AIPlayer.convert(1, 1, true)])
-		# assert_equal('c', rotated[AIPlayer.convert(2, 1, true)])
-		# assert_equal('d', rotated[AIPlayer.convert(3, 1, true)])
-		# assert_equal('e', rotated[AIPlayer.convert(4, 1, true)])
-		# assert_equal('f', rotated[AIPlayer.convert(5, 1, true)])
-		# assert_equal('g', rotated[AIPlayer.convert(6, 1, true)])
-		# assert_equal('h', rotated[AIPlayer.convert(7, 1, true)])
-		# assert_equal('i', rotated[AIPlayer.convert(8, 1, true)])
+		
+		assert_equal('a', rotated[AIPlayer.convert(0, 1, true)])
+		assert_equal('b', rotated[AIPlayer.convert(1, 1, true)])
+		assert_equal('c', rotated[AIPlayer.convert(2, 1, true)])
+		assert_equal('d', rotated[AIPlayer.convert(3, 1, true)])
+		assert_equal('e', rotated[AIPlayer.convert(4, 1, true)])
+		assert_equal('f', rotated[AIPlayer.convert(5, 1, true)])
+		assert_equal('g', rotated[AIPlayer.convert(6, 1, true)])
+		assert_equal('h', rotated[AIPlayer.convert(7, 1, true)])
+		assert_equal('i', rotated[AIPlayer.convert(8, 1, true)])
 	end
 
 
