@@ -13,33 +13,19 @@ class AIPlayerTest < Minitest::Test
     @board = MiniTest::Mock.new
   end
 
-  #def lst_draw_next_loosing_move
-  #  array =  ['O', nil, 'X',
-  #            'X', 'X', 'O',
-  #            'O', 'X', 'O']
-  #  @board.expect(:to_a, array)
-  #  @fakeRand.expect(:rand, 0, [Integer])
-  #  move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
-  #  @ai_player.mark_last_move_as_drawing(@game_id, @player_number)
-  #  @board.expect(:to_a, array)
-  #  @fakeRand.expect(:rand, 0, [Integer])
-  #  move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
-  #  assert_equal(move_first, move_second)
-  #end
-
-	def test_ai_should_pick_winning_move
-		array =  [nil, nil, 'X',
-              'X', 'X', 'X',
-              'X', 'X', 'X']
-		@board.expect(:to_a, array)
-		@fakeRand.expect(:rand, 0, [Integer])
-		move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
-		@ai_player.declare_victorious(@board, @game_id, @player_number)
-		@board.expect(:to_a, array)
-		@fakeRand.expect(:rand, 0, [Integer])
-		move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
-		assert_equal(move_first, move_second)
-  end
+   def test_ai_should_pick_winning_move
+     array =  [nil, nil, 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+     @board.expect(:to_a, array)
+     @fakeRand.expect(:rand, 0, [Integer])
+     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+     @ai_player.declare_victorious(@board, @game_id, @player_number)
+     @board.expect(:to_a, array)
+     @fakeRand.expect(:rand, 0, [Integer])
+     move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
+     assert_equal(move_first, move_second)
+   end
   def test_ai_should_not_pick_losing_move
     array =  [nil, nil, 'X',
               'X', 'X', 'X',
@@ -69,23 +55,23 @@ class AIPlayerTest < Minitest::Test
   end
 
   def test_random_isomorphism_of_previous_game
-		@fakeRand.expect(:rand, 0, [Integer])
-		array =  [nil, 'X', 'O',
-							nil, 'X', nil,
-							nil, nil, nil]
-		tested_array = AIPlayer.rotate_clockwise(array, 2)
-    @board.expect(:to_a,array)
-    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
-		array[move_first] = 'Test'
-
-		# test board
-    @board.expect(:to_a, tested_array)
     @fakeRand.expect(:rand, 0, [Integer])
-    move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
-		tested_array[move_second] = 'Test'
+    array =  [nil, 'X', 'O',
+              nil, 'X', nil,
+              nil, nil, nil]
+    tested_array = AIPlayer.rotate_clockwise(array, 2)
+  @board.expect(:to_a,array)
+  move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    array[move_first] = 'Test'
 
-    assert_equal(AIPlayer.unrotate(move_second, 2), move_first)
-    @board.verify
+    # test board
+  @board.expect(:to_a, tested_array)
+  @fakeRand.expect(:rand, 0, [Integer])
+  move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    tested_array[move_second] = 'Test'
+
+  assert_equal(AIPlayer.unrotate(move_second, 2), move_first)
+  @board.verify
   end
 
   def test_isomorphism_of_previous_game
@@ -213,10 +199,10 @@ class AIPlayerTest < Minitest::Test
     @fakeRand.expect(:rand, 0, [Integer])
     @fakeRand.expect(:rand, 0, [Integer])
     @fakeRand.expect(:rand, 1, [Integer])
-    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id, @player_number)
     @ai_player.declare_defeated(@board, @game_id, @player_number)
     move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
-    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
     @ai_player.declare_defeated(@board, @game_id+1, @player_number)
     move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
     assert_equal(move_second, move_last)
@@ -241,8 +227,8 @@ class AIPlayerTest < Minitest::Test
     @fakeRand.expect(:rand, 0, [Integer])
     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
     @ai_player.declare_draw(@board, @game_id, @player_number)
-    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
-    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
     @ai_player.declare_defeated(@board, @game_id+1, @player_number)
     move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
     assert_equal(move_first, move_last)
@@ -267,8 +253,8 @@ class AIPlayerTest < Minitest::Test
     @fakeRand.expect(:rand, 0, [Integer])
     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
     @ai_player.declare_draw(@board, @game_id, @player_number)
-    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
-    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
     @ai_player.declare_draw(@board, @game_id+1, @player_number)
     move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
     assert_equal(move_first, move_last)
@@ -292,7 +278,7 @@ class AIPlayerTest < Minitest::Test
     @fakeRand.expect(:rand, 1, [Integer])
     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
     @ai_player.declare_draw(@board, @game_id, @player_number)
-    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    _ = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
     @ai_player.declare_defeated(@board, @game_id+1, @player_number)
     move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
     @ai_player.declare_defeated(@board, @game_id+2, @player_number)

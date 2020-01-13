@@ -47,7 +47,7 @@ class Board
 		if @victory_points.include? 3
 			'X'
 		elsif
-		@victory_points.include? -3
+		@victory_points.include?(-3)
 			'O'
 		elsif self.full?
 			'DRAW'
