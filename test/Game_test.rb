@@ -62,7 +62,8 @@ class GameTest < Minitest::Test
 		p2.verify
 		board.verify
 	end
-	def restart_of_drawed_game_raise_exception
+
+	def test_restart_of_drawed_game_raise_exception
 		p1 = MiniTest::Mock.new
 		p2 = MiniTest::Mock.new
 		board = MiniTest::Mock.new
