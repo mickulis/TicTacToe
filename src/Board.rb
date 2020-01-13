@@ -35,14 +35,8 @@ class Board
 
 	# true if empty position, false if position taken, invalid argument or anything else
 	def legal_move?(position)
-		if position.nil?
-			false
-		elsif position.between? 0, 8
-			if @board[position].nil?
-				true
-			else
-				false
-			end
+		if position&.between?(0, 8) && @board[position].nil?
+			true
 		else
 			false
 		end
