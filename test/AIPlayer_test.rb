@@ -90,15 +90,16 @@ class AIPlayerTest < Minitest::Test
 
   def test_isomorphism_of_previous_game
     @ai_player = AIPlayer.new('testAI', FakeRandom.new)
-		# learning board
-		array = [nil, nil, 'X', nil, nil, nil, nil, nil, nil]
-		# expected selection
-		array_mirror = AIPlayer.reflect(array)
+    # learning board
+    array = [nil, nil, 'X', nil, nil, nil, nil, nil, nil]
+    # expected selection
+    array_mirror = AIPlayer.reflect(array.map(&:clone))
 
-		# testing board
-		rotated = AIPlayer.rotate_clockwise(array, 1)
-		rotated_mirror = AIPlayer.reflect(rotated)
-		@board.expect(:to_a, array)
+    # testing board
+    rotated = AIPlayer.rotate_clockwise(array.map(&:clone), 1)
+    rotated_mirror = AIPlayer.reflect(rotated.map(&:clone))
+
+    @board.expect(:to_a, array)
     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
 
     @board.expect(:to_a, rotated)
@@ -155,7 +156,7 @@ class AIPlayerTest < Minitest::Test
     array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
     reflected = AIPlayer.reflect(array)
     rotated = AIPlayer.rotate_clockwise(reflected, 1)
-    
+
     assert_equal('a', rotated[AIPlayer.convert(0, 1, true)])
     assert_equal('b', rotated[AIPlayer.convert(1, 1, true)])
     assert_equal('c', rotated[AIPlayer.convert(2, 1, true)])
@@ -167,6 +168,139 @@ class AIPlayerTest < Minitest::Test
     assert_equal('i', rotated[AIPlayer.convert(8, 1, true)])
   end
 
+  def test_ai_picks_losing_move_if_no_winning_or_drawing
+    array =  [nil, 'X', 'X',
+              'X', 'X', 'X',
+              'X', 'X', 'X']
+    @board.expect(:to_a, array)
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_defeated(@board, @game_id, @player_number)
+    @board.expect(:to_a, array)
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    assert_equal(move_first, move_second)
+  end
+
+  def test_ai_picks_drawing_move_if_no_winning
+    array =  [nil, 'X', 'X',
+              'X', 'X', 'X',
+              'X', 'X', 'X']
+    @board.expect(:to_a, array)
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_draw(@board, @game_id, @player_number)
+    @board.expect(:to_a, array)
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_second = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    assert_equal(move_first, move_second)
+  end
 
 
+  def test_ai_marks_second_to_last_move_as_losing_if_cant_win_or_draw_from_last_position
+    array1 =  [nil, nil, 'X',
+              'X', 'X', 'X',
+              'X', 'X', 'X']
+
+    array2 =  [nil, 'X', 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array2)
+    @board.expect(:to_a, array1)
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 1, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_defeated(@board, @game_id, @player_number)
+    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    @ai_player.declare_defeated(@board, @game_id+1, @player_number)
+    move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
+    assert_equal(move_second, move_last)
+    @board.verify
+  end
+
+  def test_ai_marks_second_to_last_move_as_drawing_if_cant_win_from_last_position_after_defeat
+    array1 =  [nil, nil, 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+
+    array2 =  [nil, 'X', 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array2)
+    @board.expect(:to_a, array1)
+    @fakeRand.expect(:rand, 1, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_draw(@board, @game_id, @player_number)
+    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    @ai_player.declare_defeated(@board, @game_id+1, @player_number)
+    move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
+    assert_equal(move_first, move_last)
+    @board.verify
+  end
+
+  def test_ai_marks_second_to_last_move_as_drawing_if_cant_win_from_last_position_after_draw
+    array1 =  [nil, nil, 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+
+    array2 =  [nil, 'X', 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array1)
+    @board.expect(:to_a, array2)
+    @board.expect(:to_a, array1)
+    @fakeRand.expect(:rand, 1, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_draw(@board, @game_id, @player_number)
+    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    move_third = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    @ai_player.declare_draw(@board, @game_id+1, @player_number)
+    move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
+    assert_equal(move_first, move_last)
+    @board.verify
+  end
+
+  def test_ai_marks_last_move_as_losing_from_drawing
+    array =  [nil, nil, 'X',
+               'X', 'X', 'X',
+               'X', 'X', 'X']
+
+    @board.expect(:to_a, array)
+    @board.expect(:to_a, array)
+    @board.expect(:to_a, array)
+    @board.expect(:to_a, array)
+    @board.expect(:to_a, array)
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 0, [Integer])
+    @fakeRand.expect(:rand, 1, [Integer])
+    move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
+    @ai_player.declare_draw(@board, @game_id, @player_number)
+    move_second = @ai_player.take_a_turn(@board, @game_id+1, @player_number)
+    @ai_player.declare_defeated(@board, @game_id+1, @player_number)
+    move_last = @ai_player.take_a_turn(@board, @game_id+2, @player_number)
+    @ai_player.declare_defeated(@board, @game_id+2, @player_number)
+    assert_equal(move_first, move_last)
+
+    check_first = @ai_player.take_a_turn(@board, @game_id+3, @player_number)
+    check_second = @ai_player.take_a_turn(@board, @game_id+3, @player_number)
+    refute_equal(check_first, check_second)
+    @board.verify
+  end
 end
