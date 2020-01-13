@@ -75,6 +75,7 @@ class BoardTest < Minitest::Test
 		board.insert(8, 'X')
 		assert_equal(true, board.full?)
 	end
+	
 	def test_check_position_and_illegal_moves
 		board = Board.new
 		for i in (0..8) do
@@ -85,6 +86,7 @@ class BoardTest < Minitest::Test
 		assert_equal(false, board.legal_move?(rand(8)))
 		assert_equal(false, board.legal_move?(nil))
 	end
+
 	def test_fill_without_winner__draw
 		board = Board.new
 		board.insert(0, 'X')
@@ -97,5 +99,36 @@ class BoardTest < Minitest::Test
 		board.insert(7, 'X')
 		board.insert(8, 'O')
 		assert_equal 'DRAW', board.victory?
+	end
+
+	def test_invalid_token__token_to_value
+		board = Board.new
+		assert_raises ArgumentError do 
+			board.insert(0, nil)
+		end
+	end
+
+	def test_determine_else_winner__victory
+		board = Board.new
+		assert_equal(false, board.victory?)		
+	end
+
+	def test_print_board__to_s
+		board = Board.new
+		board.insert(0, 'X')
+		board.insert(1, 'X')
+		board.insert(2, 'X')
+		board.insert(3, 'X')
+		board.insert(4, 'X')
+		board.insert(5, 'X')
+		board.insert(6, 'X')
+		board.insert(7, 'X')
+		board.insert(8, 'X')
+		array = board.to_a
+		assert_equal(" #{array[0]} | #{array[1]} | #{array[2]}\n"\
+		" --+---+--\n"\
+		" #{array[3]} | #{array[4]} | #{array[5]}\n"\
+		" --+---+--\n"\
+		" #{array[6]} | #{array[7]} | #{array[8]}\n", board.to_s)		
 	end
 end
