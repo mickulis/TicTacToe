@@ -74,10 +74,7 @@ class GameTest < Minitest::Test
 		board.expect(:legal_move?, true, [0])
 		board.expect(:insert, nil, [0, 'X'])
 		game = Game.new(p1, p2, board)
-		$stdout = StringIO.new
 		game.start
-		out1 = $stdout.string.split("\n")
-		assert(out1.any? { |line| line.include? 'DRAW'})
 		$stdout = StringIO.new
 		assert_raises Exception do
 			game.start
