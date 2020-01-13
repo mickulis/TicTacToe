@@ -90,15 +90,16 @@ class AIPlayerTest < Minitest::Test
 
   def test_isomorphism_of_previous_game
     @ai_player = AIPlayer.new('testAI', FakeRandom.new)
-		# learning board
-		array = [nil, nil, 'X', nil, nil, nil, nil, nil, nil]
-		# expected selection
-		array_mirror = AIPlayer.reflect(array)
+    # learning board
+    array = [nil, nil, 'X', nil, nil, nil, nil, nil, nil]
+    # expected selection
+    array_mirror = AIPlayer.reflect(array.map(&:clone))
 
-		# testing board
-		rotated = AIPlayer.rotate_clockwise(array, 1)
-		rotated_mirror = AIPlayer.reflect(rotated)
-		@board.expect(:to_a, array)
+    # testing board
+    rotated = AIPlayer.rotate_clockwise(array.map(&:clone), 1)
+    rotated_mirror = AIPlayer.reflect(rotated.map(&:clone))
+
+    @board.expect(:to_a, array)
     move_first = @ai_player.take_a_turn(@board, @game_id, @player_number)
 
     @board.expect(:to_a, rotated)
@@ -155,7 +156,7 @@ class AIPlayerTest < Minitest::Test
     array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
     reflected = AIPlayer.reflect(array)
     rotated = AIPlayer.rotate_clockwise(reflected, 1)
-    
+
     assert_equal('a', rotated[AIPlayer.convert(0, 1, true)])
     assert_equal('b', rotated[AIPlayer.convert(1, 1, true)])
     assert_equal('c', rotated[AIPlayer.convert(2, 1, true)])
@@ -302,6 +303,4 @@ class AIPlayerTest < Minitest::Test
     refute_equal(check_first, check_second)
     @board.verify
   end
-
-
 end

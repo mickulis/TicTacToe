@@ -82,31 +82,10 @@ class AIPlayer
 	def mark_last_move_as_losing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
-			#puts "last move: #{last_move.move}"
 			if @winning_moves[last_move.board_hash].include?(last_move.move)
-				#puts "last move: #{last_move.move}, from winning to losing"
-				@winning_moves[last_move.board_hash].delete(last_move.move)
-				@losing_moves[last_move.board_hash].push(last_move.move)
-				if @winning_moves[last_move.board_hash].empty?
-					if @drawing_moves[last_move.board_hash].empty?
-						#puts "no more winning or drawing moves, changing previous move to losing"
-						mark_last_move_as_losing(game_id, player_number)
-					else
-						#puts "no more winning moves, changing previous move to drawing"
-						mark_last_move_as_drawing(game_id, player_number)
-					end
-				end
+				move_winning_to_losing(game_id, last_move, player_number)
 			elsif @drawing_moves[last_move.board_hash].include?(last_move.move)
-				#puts "last move: #{last_move.move}, from drawing to losing"
-				@drawing_moves[last_move.board_hash].delete(last_move.move)
-				@losing_moves[last_move.board_hash].push(last_move.move)
-
-				if @drawing_moves[last_move.board_hash].empty?
-					#puts "no more winning or drawing moves, changing previous move to losing"
-					mark_last_move_as_losing(game_id, player_number)
-				end
-			else
-				#puts "last move: #{last_move.move}, was losing already"
+				move_drawing_to_losing(game_id, last_move, player_number)
 			end
 		end
 	end
@@ -120,17 +99,8 @@ class AIPlayer
 	def mark_last_move_as_drawing(game_id, player_number)
 		if @games_move_history[player_number][game_id].length > 0
 			last_move = @games_move_history[player_number][game_id].pop
-			puts "last move: #{last_move.move}"
 			if @winning_moves[last_move.board_hash].include?(last_move.move)
-				puts "last move: #{last_move.move}, from winning to drawing"
-				@winning_moves[last_move.board_hash].delete(last_move.move)
-				@drawing_moves[last_move.board_hash].push(last_move.move)
-				if @winning_moves[last_move.board_hash].empty?
-					puts "no more winning moves, changing previous move to drawing"
-					mark_last_move_as_drawing(game_id, player_number)
-				end
-			else
-				puts "last move: #{last_move.move}, was drawing already"
+				move_winning_to_drawing(game_id, last_move, player_number)
 			end
 		end
 	end
@@ -189,20 +159,20 @@ class AIPlayer
 	# output: int (0..8)
 	def find_move(board_hash, array)
 		if @winning_moves.has_key?(board_hash) && @winning_moves[board_hash].any?
-			puts "found winning moves"
+			#puts "found winning moves"
 			list_of_moves = @winning_moves[board_hash]
 		elsif @drawing_moves.has_key?(board_hash) && @drawing_moves[board_hash].any?
-			puts "found drawing moves"
+			#puts "found drawing moves"
 			list_of_moves = @drawing_moves[board_hash]
 		elsif @losing_moves.has_key?(board_hash) && @losing_moves[board_hash].any?
-			puts "found losing moves"
+			#puts "found losing moves"
 			list_of_moves = @losing_moves[board_hash]
 		else
 			list_of_moves = (0..8).to_a.select { |move| array[move].nil? }
 			@winning_moves[board_hash] = list_of_moves
 			@drawing_moves[board_hash] = Array.new
 			@losing_moves[board_hash] = Array.new
-			puts "found no moves, creating new list: #{list_of_moves.to_s}"
+			#puts "found no moves, creating new list: #{list_of_moves.to_s}"
 		end
 		list_of_moves[@rng.rand(list_of_moves.length)]
 	end
@@ -269,9 +239,10 @@ class AIPlayer
 	# input: board_array: Array (size: 9, possible values: 'X', 'O', nil)
 	# output: int (0..8)
 	def self.reflect(array)
-		[array[2], array[1], array[0],
-		 array[5], array[4], array[3],
-		 array[8], array[7], array[6]]
+		array[0], array[2] = array[2], array[0]
+		array[3], array[5] = array[5], array[3]
+		array[6], array[8] = array[8], array[6]
+		array
 	end
 
 	# recursive
@@ -285,6 +256,40 @@ class AIPlayer
 							 array[7], array[4], array[1],
 							 array[8], array[5], array[2]]
 			AIPlayer.rotate_clockwise(rotated_array, rotation - 1)
+		end
+	end
+
+	private
+
+	def move_winning_to_drawing(game_id, last_move, player_number)
+		@winning_moves[last_move.board_hash].delete(last_move.move)
+		@drawing_moves[last_move.board_hash].push(last_move.move)
+		if @winning_moves[last_move.board_hash].empty?
+			mark_last_move_as_drawing(game_id, player_number)
+		end
+	end
+
+	def move_drawing_to_losing(game_id, last_move, player_number)
+		@drawing_moves[last_move.board_hash].delete(last_move.move)
+		@losing_moves[last_move.board_hash].push(last_move.move)
+
+		if @drawing_moves[last_move.board_hash].empty?
+			#puts "no more winning or drawing moves, changing previous move to losing"
+			mark_last_move_as_losing(game_id, player_number)
+		end
+	end
+
+	def move_winning_to_losing(game_id, last_move, player_number)
+		@winning_moves[last_move.board_hash].delete(last_move.move)
+		@losing_moves[last_move.board_hash].push(last_move.move)
+		if @winning_moves[last_move.board_hash].empty?
+			if @drawing_moves[last_move.board_hash].empty?
+				#puts "no more winning or drawing moves, changing previous move to losing"
+				mark_last_move_as_losing(game_id, player_number)
+			else
+				#puts "no more winning moves, changing previous move to drawing"
+				mark_last_move_as_drawing(game_id, player_number)
+			end
 		end
 	end
 end
