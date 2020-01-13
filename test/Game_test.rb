@@ -62,4 +62,30 @@ class GameTest < Minitest::Test
 		p2.verify
 		board.verify
 	end
+	def restart_of_drawed_game_raise_exception
+		p1 = MiniTest::Mock.new
+		p2 = MiniTest::Mock.new
+		board = MiniTest::Mock.new
+		p1.expect(:take_a_turn, 0, [board, Integer, 1])
+		p1.expect(:declare_draw, nil, [board, Integer, 1])
+		p2.expect(:declare_draw, nil, [board, Integer, 2])
+		board.expect(:victory?, 'DRAW')
+		board.expect(:legal_move?, true, [0])
+		board.expect(:insert, nil, [0, 'X'])
+		game = Game.new(p1, p2, board)
+		$stdout = StringIO.new
+		game.start
+		out1 = $stdout.string.split("\n")
+		assert(out1.any? { |line| line.include? 'DRAW'})
+		$stdout = StringIO.new
+		assert_raises Exception do
+			game.start
+		end
+		out2 = $stdout.string.split("\n")
+		# Game not started because it was finished before
+		assert_equal(0, out2.count)
+		p1.verify
+		p2.verify
+		board.verify
+	end
 end
